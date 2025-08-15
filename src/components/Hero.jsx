@@ -15,7 +15,12 @@ export default function Hero() {
 
         <p className="text-sm md:text-base font-light mt-4">Monitor your progress, and achieve your fitness <span className="text-lime-400 font-medium">goals</span> with ease.</p>
       <p className="text-sm md:text-base font-light"><span className="text-lime-400 font-medium">Join</span> the community and start your <span className="text-lime-400 font-medium">fitness</span> journey today!</p>
-        <button className="bg-lime-400 text-black px-6 py-2 rounded-md mt-2 border border-lime-600 border-solid  bt-shadow hover:scale-110">Get Started</button>
+
+
+        <button func= {()=>{
+            window.location.href = "#generator";}}
+            text={"Now Start "}
+            className="bg-lime-400 text-black px-6 py-2 rounded-md mt-2 border border-lime-600 border-solid  bt-shadow hover:scale-110">Get Started</button>
 
         
 

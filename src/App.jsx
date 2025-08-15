@@ -28,6 +28,9 @@ function genarateWorkout(workoutType, muscle, workoutgoal) {
     setWorkout(newWorkout);
 
 
+    window.location.href = "#workout";
+  }
+
   return (
     <main className="min-h-screen flex flex-col bg-gradient-to-r from-teal-800 to-teal-950 text-white">
 
@@ -42,6 +45,7 @@ function genarateWorkout(workoutType, muscle, workoutgoal) {
       {Workout && (<Workout Workout ={Workout} />)}
     </main>
   )
-}}}
+}}
 
 export default App
+

@@ -32,6 +32,7 @@ export default function Generator( props) {
     <SectionWrapper 
       header={"Get Your Workout Plan"}
       title={["it's", "Huge", "o'clock"]}
+      id={generate}
     >
       <Header
         index={"01"}

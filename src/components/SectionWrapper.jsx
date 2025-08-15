@@ -3,13 +3,13 @@ import React from "react";
 
 
 export default function SectionWrapper(props) {
-    const { children, header, title } = props;
+    const { children, header, title, id } = props;
 
 
   return (
 
 
-    <section className="min-h-screen flex flex-col gap-10  p-6">
+    <section id={id} className="min-h-screen flex flex-col gap-10  p-6">
 
     <div className="flex flex-col gap-2 items-center justify-center  bg-lime-500 p-6 shadow-lg rounded-lg">
       <p className="text-xl font-semibold text-black">{header}</p>
