@@ -1,0 +1,26 @@
+* {
+
+font-family: poppins, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+    
+}
+
+
+span {
+
+ font-family: inherit;
+  font-weight: inherit;
+}
+
+.bt-shadow {
+  box-shadow: 2px 3px 0 0 rgb(80, 155, 80);
+  
+}
+
+.bt-shadow:hover {
+ 
+  transition: all 0.3s ease-in-out;
+
+}
