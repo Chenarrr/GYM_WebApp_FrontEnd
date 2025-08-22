@@ -2,45 +2,38 @@ import { EXERCISES, SCHEMES, TEMPOS, WORKOUTS } from "./Workouts"
 const exercises = exercisesFlattener(EXERCISES)
 
 export function generateWorkout(args) {
-    const { workoutType, muscle: workout, workoutgoal } = args
+    const { workoutType, muscle, workoutgoal } = args
     let exer = Object.keys(exercises);
     exer = exer.filter((key) => exercises[key].meta.environment !== "home");
     let includedTracker = [];
-    let numSets = 5;
-    let listOfworkoutType;
 
-    if (workout === "individual") {
-        listOfMuscles = muscles;
+    // Get scheme info
+    const scheme = SCHEMES[workoutgoal];
+    const numCompound = scheme.ratio[0];   // Number of compound sets
+    const numAccessory = scheme.ratio[1];  // Number of accessory sets
+    const repMin = scheme.repRanges[0];
+    const repMax = scheme.repRanges[1];
+
+    let listOfMuscles;
+    if (workoutType === "individual") {
+        listOfMuscles = Array.isArray(muscle) ? muscle : [];
     } else {
-        listOfMuscles = WORKOUTS[workout][muscles[0]];
+        listOfMuscles = (WORKOUTS[workoutType] && Array.isArray(muscle) && muscle.length > 0 && WORKOUTS[workoutType][muscle[0]])
+            ? WORKOUTS[workoutType][muscle[0]]
+            : [];
     }
 
-    listOfMuscles = new Set(shuffleArray(listOfMuscles));
+    listOfMuscles = new Set(shuffleArray(Array.isArray(listOfMuscles) ? listOfMuscles : []));
     let arrOfMuscles = Array.from(listOfMuscles);
-    let scheme = workoutgoal
-    let sets = SCHEMES[scheme].ratio
-        .reduce((acc, curr, index) => {
-            //make this compound and exercise muscle -> array of objects and destructure in loop
-            return [
-                ...acc,
-                ...[...Array(parseInt(curr)).keys()].map((val) =>
-                    index === 0 ? "compound" : "accessory"
-                ),
-            ];
-        }, [])
-        .reduce((acc, curr, index) => {
-            const muscleGroupToUse =
-                index < arrOfMuscles.length
-                    ? arrOfMuscles[index]
-                    : arrOfMuscles[index % arrOfMuscles.length];
-            return [
-                ...acc,
-                {
-                    setType: curr,
-                    muscleGroup: muscleGroupToUse,
-                },
-            ];
-        }, []);
+
+    // Build sets array based on scheme ratio
+    let sets = [
+        ...[...Array(numCompound).keys()].map(() => "compound"),
+        ...[...Array(numAccessory).keys()].map(() => "accessory")
+    ].map((setType, index) => ({
+        setType,
+        muscleGroup: arrOfMuscles[index % arrOfMuscles.length]
+    }));
 
     const { compound: compoundExercises, accessory: accessoryExercises } =
         exer.reduce(
@@ -72,7 +65,6 @@ export function generateWorkout(args) {
                 includedTracker.includes(curr) ||
                 !data[curr].muscles.includes(muscleGroup)
             ) {
-                // if (includedTracker.includes(curr)) { console.log('banana', curr) }
                 return acc;
             }
             return { ...acc, [curr]: exercises[curr] };
@@ -90,42 +82,35 @@ export function generateWorkout(args) {
             Math.floor(Math.random() * filteredOppList.length)
             ];
 
-        // console.log(randomExercise)
-
         if (!randomExercise) {
             return {};
         }
 
-        let repsOrDuraction =
+        // Reps based on scheme
+        let repsOrDuration =
             exercises[randomExercise].unit === "reps"
-                ? Math.min(...SCHEMES[scheme].repRanges) +
-                Math.floor(
-                    Math.random() *
-                    (Math.max(...SCHEMES[scheme].repRanges) -
-                        Math.min(...SCHEMES[scheme].repRanges))
-                ) +
-                (setType === "accessory" ? 4 : 0)
+                ? repMin + Math.floor(Math.random() * (repMax - repMin + 1))
                 : Math.floor(Math.random() * 40) + 20;
+
         const tempo = TEMPOS[Math.floor(Math.random() * TEMPOS.length)];
 
         if (exercises[randomExercise].unit === "reps") {
             const tempoSum = tempo
                 .split(" ")
                 .reduce((acc, curr) => acc + parseInt(curr), 0);
-            if (tempoSum * parseInt(repsOrDuraction) > 85) {
-                repsOrDuraction = Math.floor(85 / tempoSum);
+            if (tempoSum * parseInt(repsOrDuration) > 85) {
+                repsOrDuration = Math.floor(85 / tempoSum);
             }
         } else {
-            //set to nearest 5 seconds
-            repsOrDuraction = Math.ceil(parseInt(repsOrDuraction) / 5) * 5;
+            repsOrDuration = Math.ceil(parseInt(repsOrDuration) / 5) * 5;
         }
         includedTracker.push(randomExercise);
 
         return {
             name: randomExercise,
             tempo,
-            rest: SCHEMES[scheme]["rest"][setType === "compound" ? 0 : 1],
-            reps: repsOrDuraction,
+            rest: scheme.rest[setType === "compound" ? 0 : 1],
+            reps: repsOrDuration,
             ...exercises[randomExercise],
         };
     });

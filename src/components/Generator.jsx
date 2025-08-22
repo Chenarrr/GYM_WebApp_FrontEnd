@@ -17,22 +17,33 @@ function Header({ index, title, discription }) {
   );
 }
 
-export default function Generator( props) {
+export default function Generator(props) {
   const { workoutType, setWorkoutType, muscle, setMuscle, workoutgoal, setWorkoutgoal } = props;
   const [selectedWorkout, setSelectedWorkout] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState(null);
-  
+
   function handleBlockSelection(blockName) {
     setSelectedBlock(blockName);
+    if (props.setMuscle) {
+      props.setMuscle([blockName]);
+    }
   }
 
-  
+  // Auto-select first block when workoutType changes
+  function handleWorkoutTypeChange(type) {
+    setWorkoutType(type);
+    const firstBlock = Object.keys(WORKOUTS[type])[0];
+    setSelectedBlock(firstBlock);
+    if (props.setMuscle) {
+      props.setMuscle([firstBlock]);
+    }
+  }
 
   return (
     <SectionWrapper 
       header={"Get Your Workout Plan"}
       title={["it's", "Huge", "o'clock"]}
-      id={generate}
+      id="generator"
     >
       <Header
         index={"01"}
@@ -43,10 +54,7 @@ export default function Generator( props) {
       <div className="flex gap-4 flex-wrap items-center justify-center max-w-4xl mx-auto m-4">
         {Object.keys(WORKOUTS).map((type, typeIndex) => (
           <button
-            onClick={() => {
-              setWorkoutType(type);
-              setSelectedBlock(null); 
-            }}
+            onClick={() => handleWorkoutTypeChange(type)}
             key={typeIndex}
             className={
               "bg-lime-500 text-black px-4 py-2 rounded-md shadow-md hover:bg-lime-300 transition duration-300 mt-6 shadow-lg hover:shadow-xl hover:scale-105" +
@@ -78,23 +86,19 @@ export default function Generator( props) {
 
         {selectedWorkout && (
           <div className="flex flex-col gap-2 mt-6 items-center text-white justify-center bg-teal-600/20 p-4 rounded-lg shadow-md max-w-md mx-auto">
-            
             {selectedBlock ? (
               <div className="bg-black text-white px-4 py-4 rounded-md shadow-md w-full text-center">
                 <p className="text-lg font-semibold capitalize">
                   {selectedBlock.replaceAll("_", " ")}
                 </p>
-
-               
                 {Array.isArray(WORKOUTS[workoutType][selectedBlock]) && (
                   <p className="text-sm mt-2 text-gray-300">
                     {WORKOUTS[workoutType][selectedBlock].join(", ")}
                   </p>
                 )}
-
-                
                 <button
-                  onClick={() => setSelectedBlock(null)}
+                  onClick={() =>{setSelectedBlock(null)
+                                 setSelectedWorkout(false)}}
                   className="mt-4 text-sm text-lime-400 underline hover:text-lime-300"
                 >
                   Change Selection
@@ -117,7 +121,6 @@ export default function Generator( props) {
 
       <div className="mb-12 mt-20">
         <Header index={"03"} title={"Choose your workout type"} discription={""} />
-
         <div className="flex gap-4 flex-wrap items-center justify-center max-w-4xl mx-auto">
           {Object.keys(SCHEMES).map((scheme, schemeIndex) => (
             <button
@@ -135,11 +138,7 @@ export default function Generator( props) {
           ))}
         </div>
       </div >
-      <Button  functions ={updateWorkout} text= "Start Now"/>
+      <Button func={selectedBlock ? props.updateWorkout : undefined} text="Start Now" disabled={!selectedBlock}/>
     </SectionWrapper>
-     
-     
-     
-
   );
 }

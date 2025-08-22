@@ -16,7 +16,7 @@ export default function SectionWrapper(props) {
       <h2 className="font-semi-bold text-3xl sm:text4xl text-black" > {title[0]} <span className="uppercase font-medium">{title[2]}</span> {title[3]} </h2>
     </div>
 
-    <div className="flex flex-col gap-4 items-center justify-center max-w-4xl mx-auto text-black bg-teal-800 p-6 rounded-lg shadow-md hover:bg-teal-500/20 ransition duration-300  hover:scale-110 m-2">
+    <div className="flex flex-col gap-4 items-center justify-center max-w-4xl mx-auto text-black bg-teal-800 p-6 rounded-lg shadow-md hover:bg-teal-500/20 ransition duration-300  hover:scale-105 m-2">
         {children}
      
    
