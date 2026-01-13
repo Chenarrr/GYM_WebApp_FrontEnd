@@ -1,18 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import SectionWrapper from "./SectionWrapper"; 
 import { SCHEMES, WORKOUTS } from "../tools/Workouts";
 import Button from "./Button";
 
-function Header({ index, title, discription }) {
+const BUTTON_BASE_CLASSES = "bg-lime-500 text-black px-4 py-2 rounded-md shadow-md hover:bg-lime-300 transition duration-300 mt-6 shadow-lg hover:shadow-xl hover:scale-105";
+const BUTTON_SELECTED_CLASSES = " bg-lime-100 shadow-lg shadow-lime-600 ";
+
+function Header({ index, title, description }) {
   return (
     <div className="flex flex-col gap-4 text-center">
       <div className="flex gap-2 items-center justify-center">
-        <p className="text-3xl sm:text-4xl md:text-5xl font-semibold text-lime-400">
+        <p className="text-3xl sm:text-4xl md:text-5xl font-semibold text-lime-400" aria-label={`Step ${index}`}>
           {index}
         </p>
         <h4 className="text-xl sm:text-2xl md:text-3xl">{title}</h4>
       </div>
-      <p className="text-lg sm:text-xl text-gray-200 max-w-2xl mx-auto">{discription}</p>
+      {description && <p className="text-lg sm:text-xl text-gray-200 max-w-2xl mx-auto">{description}</p>}
     </div>
   );
 }
@@ -22,22 +25,24 @@ export default function Generator(props) {
   const [selectedWorkout, setSelectedWorkout] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState(null);
 
-  function handleBlockSelection(blockName) {
+  const handleBlockSelection = useCallback((blockName) => {
     setSelectedBlock(blockName);
     if (props.setMuscle) {
       props.setMuscle([blockName]);
     }
-  }
+  }, [props]);
 
-  // Auto-select first block when workoutType changes
-  function handleWorkoutTypeChange(type) {
+  const handleWorkoutTypeChange = useCallback((type) => {
     setWorkoutType(type);
     const firstBlock = Object.keys(WORKOUTS[type])[0];
     setSelectedBlock(firstBlock);
     if (props.setMuscle) {
       props.setMuscle([firstBlock]);
     }
-  }
+  }, [setWorkoutType, props]);
+
+  const workoutTypes = useMemo(() => Object.keys(WORKOUTS), []);
+  const schemes = useMemo(() => Object.keys(SCHEMES), []);
 
   return (
     <SectionWrapper 
@@ -48,19 +53,19 @@ export default function Generator(props) {
       <Header
         index={"01"}
         title={"Pick your workout"}
-        discription={""}
+        description={""}
       />
 
-      <div className="flex gap-4 flex-wrap items-center justify-center max-w-4xl mx-auto m-4">
-        {Object.keys(WORKOUTS).map((type, typeIndex) => (
+      <div className="flex gap-4 flex-wrap items-center justify-center max-w-4xl mx-auto m-4" role="group" aria-label="Workout type selection">
+        {workoutTypes.map((type, typeIndex) => (
           <button
             onClick={() => handleWorkoutTypeChange(type)}
             key={typeIndex}
+            aria-pressed={type === workoutType}
+            aria-label={`Select ${type.replaceAll("_", " ")} workout`}
             className={
-              "bg-lime-500 text-black px-4 py-2 rounded-md shadow-md hover:bg-lime-300 transition duration-300 mt-6 shadow-lg hover:shadow-xl hover:scale-105" +
-              (type === workoutType
-                ? " bg-lime-100 shadow-lg shadow-lime-600 "
-                : " bg-lime-500")
+              BUTTON_BASE_CLASSES +
+              (type === workoutType ? BUTTON_SELECTED_CLASSES : " bg-lime-500")
             }
           >
             <p className="capitalize">{type.replaceAll("_", " ")}</p>
@@ -69,7 +74,7 @@ export default function Generator(props) {
       </div>
 
       <div className="mt-20">
-        <Header index={"02"} title={"Lock on your workout"} discription={""} />
+        <Header index={"02"} title={"Lock on your workout"} description={""} />
 
         <div className="flex justify-center mt-4">
           <button
@@ -77,6 +82,8 @@ export default function Generator(props) {
               setSelectedWorkout(!selectedWorkout);
               setSelectedBlock(null); 
             }}
+            aria-expanded={selectedWorkout}
+            aria-label="Toggle workout selection menu"
             className="bg-lime-500 text-black px-6 py-3 rounded-md shadow-md hover:bg-lime-300 transition duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full max-w-md"
           >
             <p className="text-lg font-semibold">Choose Today's Workout</p>
@@ -120,25 +127,25 @@ export default function Generator(props) {
       </div>
 
       <div className="mb-12 mt-20">
-        <Header index={"03"} title={"Choose your workout type"} discription={""} />
-        <div className="flex gap-4 flex-wrap items-center justify-center max-w-4xl mx-auto">
-          {Object.keys(SCHEMES).map((scheme, schemeIndex) => (
+        <Header index={"03"} title={"Choose your workout goal"} description={""} />
+        <div className="flex gap-4 flex-wrap items-center justify-center max-w-4xl mx-auto" role="group" aria-label="Workout goal selection">
+          {schemes.map((scheme, schemeIndex) => (
             <button
               onClick={() => setWorkoutgoal(scheme)}
               key={schemeIndex}
+              aria-pressed={scheme === workoutgoal}
+              aria-label={`Select ${scheme.replaceAll("_", " ")} goal`}
               className={
-                "bg-lime-500 text-black px-4 py-2 rounded-md shadow-md hover:bg-lime-300 transition duration-300 mt-6 shadow-lg hover:shadow-xl hover:scale-105" +
-                (scheme === workoutgoal
-                  ? " bg-lime-100 shadow-lg shadow-lime-600 "
-                  : " bg-lime-500")
+                BUTTON_BASE_CLASSES +
+                (scheme === workoutgoal ? BUTTON_SELECTED_CLASSES : " bg-lime-500")
               }
             >
               <p className="capitalize">{scheme.replaceAll("_", " ")}</p>
             </button>
           ))}
         </div>
-      </div >
-      <Button func={selectedBlock ? props.updateWorkout : undefined} text="Start Now" disabled={!selectedBlock}/>
+      </div>
+      <Button func={selectedBlock ? props.updateWorkout : undefined} text="Start Now" disabled={!selectedBlock} aria-label="Generate workout plan" />
     </SectionWrapper>
   );
 }

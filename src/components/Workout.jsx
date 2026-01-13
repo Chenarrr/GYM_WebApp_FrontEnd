@@ -3,17 +3,21 @@ import SectionWrapper from "./SectionWrapper";
 import ExerciseCard from "./ExerciseCard";
 
 export default function Workout({ workout }) {
+  if (!Array.isArray(workout) || workout.length === 0) {
+    return null;
+  }
+
   return (
     <SectionWrapper 
-      header={"genarate your workout"}
+      header={"Generate your workout"}
       title={["The", "Danger", "Zone"]}
       id={"workout"}
     > 
-      <div className="flex flex-col gap-4">
-        {(Array.isArray(workout) ? workout : []).map((exercise, i) => (
-          <ExerciseCard key={i} index={i} exercise={exercise} />
+      <section className="flex flex-col gap-4" aria-label="Workout exercises">
+        {workout.map((exercise, i) => (
+          <ExerciseCard key={exercise?.name || i} index={i} exercise={exercise} />
         ))}
-      </div>
+      </section>
     </SectionWrapper>
   );
 }
