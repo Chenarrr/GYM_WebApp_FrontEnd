@@ -8,14 +8,14 @@ const BUTTON_SELECTED_CLASSES = " from-lime-300 to-lime-400 shadow-2xl shadow-li
 
 function Header({ index, title, description }) {
   return (
-    <div className="flex flex-col gap-4 text-center mb-8">
+    <div className="flex flex-col gap-4 text-center mb-8 print:mb-4">
       <div className="flex gap-4 items-center justify-center">
-        <div className="bg-gradient-to-br from-lime-400 to-lime-600 text-black rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center font-bold text-xl sm:text-2xl shadow-lg shadow-lime-500/50" aria-label={`Step ${index}`}>
+        <div className="bg-gradient-to-br from-lime-400 to-lime-600 text-black rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center font-bold text-xl sm:text-2xl shadow-lg shadow-lime-500/50 print:shadow-none" aria-label={`Step ${index}`}>
           {index}
         </div>
-        <h4 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{title}</h4>
+        <h4 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 dark:text-white print:text-black">{title}</h4>
       </div>
-      {description && <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">{description}</p>}
+      {description && <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed print:text-black">{description}</p>}
     </div>
   );
 }

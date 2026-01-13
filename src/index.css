@@ -29,3 +29,38 @@ html{
 
   scroll-behavior: smooth;
 }
+
+/* Print Styles */
+@media print {
+  @page {
+    margin: 1cm;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  .print\\:hidden {
+    display: none !important;
+  }
+  
+  .print\\:break-inside-avoid {
+    break-inside: avoid;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  
+  article {
+    page-break-inside: avoid;
+  }
+}
