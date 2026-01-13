@@ -39,7 +39,9 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <main className="min-h-screen flex flex-col bg-gradient-to-r from-teal-800 to-teal-950 text-white">
+      <main className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-teal-900 to-slate-950 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-lime-400/5 via-transparent to-transparent"></div>
+        <div className="relative z-10">
         <Hero />
         <Generator
           workoutType={workoutType}
@@ -60,6 +62,7 @@ function App() {
             <Workout workout={workoutData} />
           </div>
         )}
+        </div>
       </main>
     </ErrorBoundary>
   )
